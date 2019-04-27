@@ -150,7 +150,7 @@
 			//initialize map
 			function initMap() {
 				map = new google.maps.Map(document.getElementById('map'),{
-					zoom:4,
+					zoom:6,
 					center: JnK			
 				});
 
@@ -393,10 +393,43 @@
 				// console.log("info",xhttp.responseText);
 				// document.getElementById('output').innerHTML = "[{\"date\":\"2-4-1998\",\"location\":\"Chennai\",\"info\":\"haswee.com\" }]";
 				 // global_object = "[{\"date\":\"2-4-1998\",\"location\":\"Chennai\",\"info\":\"haswee.com\" }]";
-				 var global_object = "[{ \"id\":\"1\",\"date\":\"1-1-2017\",\"location\":\"Kupwara\",\"info\":\"google.com\"},{\"id\":\"2\",\"date\":\"1-2-2009\",\"location\":\"Sri Lanka\",\"info\":\"fb.com\"},{\"id\":\"3\",\"date\":\"1-3-2004\",\"location\":\"Patna\",\"info\":\"nus.com\"}]";      
+				 // var global_object = "[{ \"id\":\"1\",\"date\":\"1-1-2017\",\"location\":\"Kupwara\",\"info\":\"google.com\"},{\"id\":\"2\",\"date\":\"1-2-2009\",\"location\":\"Sri Lanka\",\"info\":\"fb.com\"},{\"id\":\"3\",\"date\":\"1-3-2004\",\"location\":\"Patna\",\"info\":\"nus.com\"}]";      
 				  // var  global_object = xhttp.responseText;
 				  
-				  var myArr = JSON.parse(global_object);
+				  var jsonObject = [
+          {
+            "id":"1",
+            "date":"1-10-2010",
+            "location":"Doda, Kashmir",
+            "info":"google.com"
+          },
+          {
+            "id":"2",
+            "date":"10-10-2010",
+            "location":"Kupwara, Kashmir",
+            "info":"google.com"
+          },
+          {
+            "id":"3",
+            "date":"1-10-2019",
+            "location":"Tangmarg, Kashmir",
+            "info":"fb.com"
+          },
+          {
+            "id":"4",
+            "date":"10-01-2005",
+            "location":"Udhampur, Kashmir",
+            "info":"google.com"
+          },
+          {
+            "id":"5",
+            "date":"05-05-2014",
+            "location":"Beerwah, Kashmir",
+            "info":"google.com"
+          }
+          ];
+				  // var myArr = JSON.parse(global_object);
+				  var myArr = jsonObject;
 				  myArr.sort(function(a,b){
 				      var c = new Date(a["date"]);
 				      var d = new Date(b["date"]);
