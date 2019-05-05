@@ -94,21 +94,32 @@
 			//
 			function geocode(address){
 
-			    
-			    var ass = encodeURIComponent(address+",Jammu,India");
-			    var url = "https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q={"+ass+"}&format=json&limit=1";			   
-			    var xhttp = new XMLHttpRequest();   
-			    xhttp.open("GET",url,false);
-			    xhttp.send(null);
-			    // var output_str = xhttp.responseText;
-			    // alert(output_str);
-				var obj = JSON.parse(xhttp.responseText);
-				var lati = obj[0]["lat"];
-				var longi = obj[0]["lon"];
-				var out_array = [lati,longi];
-				// alert(out_array);
-				return out_array;
-			} 
+          
+          var ass = encodeURIComponent(address+",Jammu,India");
+          var url = "https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q={"+ass+"}&format=json&limit=1";         
+          var xhttp = new XMLHttpRequest();   
+          xhttp.open("GET",url,false);
+          xhttp.send(null);
+          // var output_str = xhttp.responseText;
+          // alert(output_str);
+        
+
+        if (xhttp.status === 200) {
+          var obj = JSON.parse(xhttp.responseText);
+          // alert(xhttp.responseText);
+          if (obj[0] == undefined) {
+            return [34.0747444,74.8204443];
+          }
+                    var lati = obj[0]["lat"];
+                    var longi = obj[0]["lon"];
+                    var out_array = [lati,longi];
+                    // alert(out_array);
+                    return out_array;
+        }        
+        else{
+          return [34.0747444,74.8204443];
+        }
+      } 
 
 			function infoTempelate (headline,place,date,info) {
 				return '<div id="content">'+
@@ -172,7 +183,7 @@
 				/*var popup = L.popup()
 						    .setLatLng(geocode(events[i]["Event.location"]))
 						    .setContent(infoTempelate(events[i]["Event.location"],events[i]["Event.date"],events[i]["info"]));*/
-				var markerElem = [events[i]["id"] , marker];
+				var markerElem = [events[i]["Event.dbid"] , marker];
 				markers.push(markerElem);
 				clicked.push([markerElem[0] , false]);
            	}
@@ -208,13 +219,13 @@
 
 
 /*, type: 'point'*/
-/*content: 'event'+events[i]["id"],
+/*content: 'event'+events[i]["Event.dbid"],
 */
 			function createItems(events) {
 				var elemArr = []
 				for (var i = 0; i < events.length; i++) {
 					console.log("i="+i);
-					var elem = {id: events[i]["id"],  start: events[i]["Event.date"], type: 'point'};
+					var elem = {id: events[i]["Event.dbid"],  start: events[i]["Event.date"], type: 'point'};
 					elemArr.push(elem);
 				}
 				return new vis.DataSet(elemArr);
@@ -300,29 +311,29 @@
 							console.log()
 
 							if( d_i<=itr && itr<=d_f ){
-								var temp_marker = getMarkerByID(markers,events[i]["id"]);
+								var temp_marker = getMarkerByID(markers,events[i]["Event.dbid"]);
 								console.log(temp_marker[0])
 								//remove from map
 								temp_marker[1].setOpacity(1);
 								//remove from timeline
 
-								if( items.get(events[i]["id"]) === null ){
+								if( items.get(events[i]["Event.dbid"]) === null ){
 									// alert("check true");
-									var elem = {id: events[i]["id"], content: 'event'+events[i]["id"], start: events[i]["Event.date"]};
+									var elem = {id: events[i]["Event.dbid"], content: 'event'+events[i]["Event.dbid"], start: events[i]["Event.date"]};
 									items.add( [elem] );
 								}																
 							}
 							else{
-								var temp_marker = getMarkerByID(markers,events[i]["id"]);
+								var temp_marker = getMarkerByID(markers,events[i]["Event.dbid"]);
 								//remove from map
 								temp_marker[1].setOpacity(0);
 								//remove from timeline		
-								if( items.get(events[i]["id"]) === null ){									
+								if( items.get(events[i]["Event.dbid"]) === null ){									
 								}								
 								else {
-									items.remove(events[i]["id"]);
+									items.remove(events[i]["Event.dbid"]);
 								}						
-								// items.remove(events[i]["id"]);	
+								// items.remove(events[i]["Event.dbid"]);	
 							}
 						}
 				}
