@@ -71,6 +71,7 @@
 				padding-left: 5%;
 		}
 
+
    </style>
 
     <!-- Make sure you put this AFTER Leaflet's CSS -->
@@ -94,7 +95,7 @@
 			function geocode(address){
 
 			    
-			    var ass = encodeURIComponent(address);
+			    var ass = encodeURIComponent(address+",Jammu,India");
 			    var url = "https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q={"+ass+"}&format=json&limit=1";			   
 			    var xhttp = new XMLHttpRequest();   
 			    xhttp.open("GET",url,false);
@@ -109,13 +110,15 @@
 				return out_array;
 			} 
 
-			function infoTempelate (place,date,info) {
+			function infoTempelate (headline,place,date,info) {
 				return '<div id="content">'+
 				'<div id="info">'+
 				'</div>'+
-				'<h1 id="firstHeading" class="firstHeading">'+ place +'</h1>'+
+				'<h1 id="firstHeading" class="firstHeading">'+ headline +'</h1>'+
 				'<div id="bodyContent">'+
+				'<p>'+ place +'</p>'+
 				'<p>'+ date +'</p>'+
+				'<p>'+ info +'</p>'+
 				// '<p a= '+info+'">'+ info +'</p>'+
 				'</div>'+
 				'</div>';
@@ -136,28 +139,14 @@
 			
 			// 
 			var temp = document.location.href;
-	        var output_str = decodeURIComponent(temp.split('?')[1].split('=')[1]);           
+	        var output_str = decodeURIComponent(temp.split('=')[1]);           
            	var events = JSON.parse(output_str);
 
            	var markers = [];
            	//array of [id,bool], keeps track of clicks on timeline events, used for toggling infoWindow
 			var clicked = [];
 
-
-
-           	for (var i = events.length - 1; i >= 0; i--) {
-           		var loc = geocode(events[i]["location"]);
-           		var marker = L.marker(loc).addTo(mymap);
-           		marker.bindPopup(infoTempelate(events[i]["location"],events[i]["date"],events[i]["info"]));
-				/*var popup = L.popup()
-						    .setLatLng(geocode(events[i]["location"]))
-						    .setContent(infoTempelate(events[i]["location"],events[i]["date"],events[i]["info"]));*/
-				var markerElem = [events[i]["id"] , marker];
-				markers.push(markerElem);
-				clicked.push([markerElem[0] , false]);
-           	}
-
-           	// DOM element where the Timeline will be attached
+			// DOM element where the Timeline will be attached
 			var container = document.getElementById('visualization');
 
 			// Create a DataSet (allows two way data-binding)
@@ -165,6 +154,8 @@
 
 			// Configuration for the Timeline
 			var options = {
+				stack: false,
+				height: '200px',
 				width: '100%',
 				margin: {
 					item: 20
@@ -173,22 +164,57 @@
 			// Create a Timeline
 			var timeline = new vis.Timeline(container, items, options);
 
+           	for (var i = events.length - 1; i >= 0; i--) {
+           		var loc = geocode(events[i]["Event.location"]);
+           		var marker = L.marker(loc).addTo(mymap);
+           		// marker.bindPopup("check");
+           		marker.bindPopup(infoTempelate(events[i]["Event.headline"],events[i]["Event.location"],events[i]["Event.date"],events[i]["Event.sentence"]));           		
+				/*var popup = L.popup()
+						    .setLatLng(geocode(events[i]["Event.location"]))
+						    .setContent(infoTempelate(events[i]["Event.location"],events[i]["Event.date"],events[i]["info"]));*/
+				var markerElem = [events[i]["id"] , marker];
+				markers.push(markerElem);
+				clicked.push([markerElem[0] , false]);
+           	}
+
+           	
+
 			timeline.on('click', function (properties) {
 				var markerElem = getMarkerByID(markers,properties.item);
-				//toggleClicked(true,properties.item,clicked);
+				toggleClicked(true,properties.item,clicked);
 				if (markerElem != null){
 					currMarker = markerElem[1];
 					currMarker.openPopup();
 				}
 			});
+			timeline.on('itemover', function (properties) {
+				var markerElem = getMarkerByID(markers,properties.item);
+				if (markerElem != null){
+					currMarker = markerElem[1];
+					popupElem = currMarker.getPopup();
+					if(popupElem.isOpen()) toggleClicked(true,properties.item,clicked);
+					else toggleClicked(false,properties.item,clicked);
+					currMarker.openPopup();
+				}
+			});
+			timeline.on('itemout', function (properties) {
+				var markerElem = getMarkerByID(markers,properties.item);
+				if (markerElem != null){
+					currMarker = markerElem[1];
+					popupElem = currMarker.getPopup();
+					if(!checkClicked(properties.item,clicked)) currMarker.closePopup();
+				}
+			});
 
 
-
+/*, type: 'point'*/
+/*content: 'event'+events[i]["id"],
+*/
 			function createItems(events) {
 				var elemArr = []
 				for (var i = 0; i < events.length; i++) {
 					console.log("i="+i);
-					var elem = {id: events[i]["id"], content: 'event'+events[i]["id"], start: events[i]["date"]};
+					var elem = {id: events[i]["id"],  start: events[i]["Event.date"], type: 'point'};
 					elemArr.push(elem);
 				}
 				return new vis.DataSet(elemArr);
@@ -200,7 +226,18 @@
 				}
 				return null;
 			}
-
+			//helper function
+			function checkClicked(id,clicked) {
+				for (var i = 0; i < clicked.length; i++) {
+					if (clicked[i][0] == id) return clicked[i][1];
+				}
+			}
+			//helper function
+			function toggleClicked(val,id,clicked) {
+				for (var i = 0; i < clicked.length; i++) {
+					if (clicked[i][0] == id) clicked[i][1] = val;
+				}
+			}
 
 
 			// 
@@ -259,7 +296,7 @@
 						for (var i = events.length - 1; i >= 0; i--) {
 							var d_i = new Date(dt1);
 							var d_f = new Date(dt2);
-							var itr = new Date(events[i]["date"]);
+							var itr = new Date(events[i]["Event.date"]);
 							console.log()
 
 							if( d_i<=itr && itr<=d_f ){
@@ -271,7 +308,7 @@
 
 								if( items.get(events[i]["id"]) === null ){
 									// alert("check true");
-									var elem = {id: events[i]["id"], content: 'event'+events[i]["id"], start: events[i]["date"]};
+									var elem = {id: events[i]["id"], content: 'event'+events[i]["id"], start: events[i]["Event.date"]};
 									items.add( [elem] );
 								}																
 							}
@@ -295,12 +332,10 @@
 				    $( "#slider-range" ).slider({
 				    //need to have dates sorted before sending t
 				      range: true,
-				      // min: new Date("1920-01-01").getTime() / 1000,
-				      // max: new Date("2020-01-01").getTime() / 1000,
-				      min: new Date( events[0]["date"] ).getTime() / 1000,
-				      max: new Date(events[events.length -1]["date"]).getTime() / 1000,
+				      min: new Date( events[0]["Event.date"] ).getTime() / 1000,
+				      max: new Date(events[events.length -1]["Event.date"]).getTime() / 1000,
 				      step: 86400,
-				      values: [ new Date( events[0]["date"] ).getTime() / 1000, new Date(events[events.length -1]["date"]).getTime() / 1000],
+				      values: [ new Date( events[0]["Event.date"] ).getTime() / 1000, new Date(events[events.length -1]["Event.date"]).getTime() / 1000],
 				      slide: function( event, ui ) {
 						if( document.getElementById("startdate_picker").value != returnDateString(ui.values[ 0 ] *1000)  ||  document.getElementById("enddate_picker").value != returnDateString(ui.values[ 1 ] *1000)){
 												changeDates(markers,items, returnDateString(ui.values[ 0 ] *1000) ,  returnDateString(ui.values[1] *1000) );
@@ -363,8 +398,8 @@
 								  
 								  var myArr = JSON.parse(global_object);
 								  myArr.sort(function(a,b){
-								      var c = new Date(a["date"]);
-								      var d = new Date(b["date"]);
+								      var c = new Date(a["Event.date"]);
+								      var d = new Date(b["Event.date"]);
 								      return c-d;
 								      });
 								  // document.getElementById('output').innerHTML = JSON.stringify(myArr);

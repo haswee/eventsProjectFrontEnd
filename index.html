@@ -129,7 +129,7 @@
           xhttp.setRequestHeader( 'Access-Control-Allow-Origin', '*');
           // xhttp.send();
           xhttp.send(send_string);
-          document.getElementById('output').innerHTML = xhttp.responseText;
+          // document.getElementById('output').innerHTML = xhttp.responseText;
 
           // console.log("info",xhttp.responseText);
           // document.getElementById('output').innerHTML = "[{\"date\":\"2-4-1998\",\"location\":\"Chennai\",\"info\":\"haswee.com\" }]";
@@ -138,85 +138,21 @@
             // // var  global_object = xhttp.responseText;
             
             // var myArr = JSON.parse(global_object);
-          //   var jsonObject = [
-          // {
-          //   "id":"1",
-          //   "date":"2010-11-01",
-          //   "location":"Pangong Lake, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"2",
-          //   "date":"2010-10-10",
-          //   "location":"Kupwara, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"3",
-          //   "date":"2019-01-10",
-          //   "location":"Leh, Kashmir",
-          //   "info":"fb.com"
-          // },
-          // {
-          //   "id":"4",
-          //   "date":"2005-10-01",
-          //   "location":"Udhampur, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"5",
-          //   "date":"2014-05-05",
-          //   "location":"Katra, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"6",
-          //   "date":"2016-08-18",
-          //   "location":"Kargil, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"7",
-          //   "date":"2010-09-12",
-          //   "location":"Ramban, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"8",
-          //   "date":"2019-04-20",
-          //   "location":"Pulwama, Kashmir",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"9",
-          //   "date":"2019-04-20",
-          //   "location":"Hyderabad, Pakistan",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"10",
-          //   "date":"2019-04-20",
-          //   "location":"Hyderabad, India",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"11",
-          //   "date":"2019-04-20",
-          //   "location":"Orissa",
-          //   "info":"google.com"
-          // },
-          // {
-          //   "id":"12",
-          //   "date":"2019-04-20",
-          //   "location":"Sri Lanka",
-          //   "info":"google.com"
-          // }
-          // ];
+            // var jsonObject = [
+            // {
+            //   "Event.headline":"Bloody incidents result of non-acceptance of political reality of Kashmir issue: Dr. Farooq Abdullah ? (Urdu Dailies ? Srinagar Times/Kashmir Uzma/Uqab)",
+            //   "Event.sentence":"Expressing concern over serious situation in South Kashmir, National Conference expressed grief and anger over the recent killings in South Kashmir.",
+            //   "Event.location":"south Kashmir",
+            //   "Event.date":"2018-04-03",
+            //   "Node.name":"the recent killings"
+            // }
+            //   ];
 
+          // var myArr = jsonObject;                   
           var myArr = JSON.parse(xhttp.responseText);                   
           myArr.sort(function(a,b){
-                var c = new Date(a["date"]);
-                var d = new Date(b["date"]);
+                var c = new Date(a["Event.date"]);
+                var d = new Date(b["Event.date"]);
                 return c-d;
                 });
             // document.getElementById('output').innerHTML = JSON.stringify(myArr);
