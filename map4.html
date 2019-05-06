@@ -400,30 +400,30 @@
 
 							function submitFunction() {
 								  var location = document.getElementById('location').value;
-								  var startdate = new Date(document.getElementById("startdate_picker").value);            
-								  var enddate = document.getElementById("enddate_picker").value;
-								  var event = document.getElementById('event').value;
+								  var startdate = changeMonthToInt(document.getElementById("startdate_picker").value);            
+								  var enddate = changeMonthToInt(document.getElementById("enddate_picker").value);
+								  var event = document.getElementById('event').value;								  
 								  var send_string = "{\
-								      \"startdate\":"+changeMonthToInt(startdate)+",\
-								      \"enddate\":"+changeMonthToInt(enddate)+",\
+								      \"startdate\":"+startdate+",\
+								      \"enddate\":"+enddate+",\
 								      \"event\":"+event+",\
 								      \"location\":"+location+"\
 								  }"
 								  
 								  // document.getElementById('output').innerHTML = send_string;
 
-								// var xhttp = new XMLHttpRequest();          
+								var xhttp = new XMLHttpRequest();          
 								// alert("here");
 
-								// xhttp.open("POST", "http://10.194.32.206:8080/query_handle/loginServlet", false);
-								// // xhttp.open("GET", "http://10.194.32.206:8080/query_handle/loginServlet?info='kay'", false);
+								xhttp.open("POST", "http://10.194.32.206:8080/query_handle/loginServlet", false);
+								// xhttp.open("GET", "http://10.194.32.206:8080/query_handle/loginServlet?info='kay'", false);
 								// xhttp.setRequestHeader( 'Access-Control-Allow-Origin', '*');
-								// xhttp.send(send_string);
+								xhttp.send(send_string);
 								// console.log("info",xhttp.responseText);
 								// document.getElementById('output').innerHTML = "[{\"date\":\"2-4-1998\",\"location\":\"Chennai\",\"info\":\"haswee.com\" }]";
 								 // global_object = "[{\"date\":\"2-4-1998\",\"location\":\"Chennai\",\"info\":\"haswee.com\" }]";
-								 var global_object = "[{ \"id\":\"1\",\"date\":\"2019-01-01\",\"location\":\"Kupwara\",\"info\":\"google.com\"},{\"id\":\"2\",\"date\":\"2007-12-01\",\"location\":\"Hyderabad\",\"info\":\"fb.com\"},{\"id\":\"3\",\"date\":\"2009-09-11\",\"location\":\"Singapore\",\"info\":\"nus.com\"}]";      
-				            	// var  global_object = xhttp.responseText;
+								 // var global_object = "[{ \"id\":\"1\",\"date\":\"2019-01-01\",\"location\":\"Kupwara\",\"info\":\"google.com\"},{\"id\":\"2\",\"date\":\"2007-12-01\",\"location\":\"Hyderabad\",\"info\":\"fb.com\"},{\"id\":\"3\",\"date\":\"2009-09-11\",\"location\":\"Singapore\",\"info\":\"nus.com\"}]";      
+				            	var  global_object = xhttp.responseText;
 								  
 								  var myArr = JSON.parse(global_object);
 								  myArr.sort(function(a,b){
@@ -431,6 +431,10 @@
 								      var d = new Date(b["Event.date"]);
 								      return c-d;
 								      });
+
+								 for (i=0 ; i<myArr.length ; i++){
+								   myArr[i]["Event.index"] = (i+1);
+								  }
 								  // document.getElementById('output').innerHTML = JSON.stringify(myArr);
 
 								 // var url = 'Events_Map.html?object='+encodeURIComponent(JSON.stringify(myArr));
